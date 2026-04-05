@@ -22,6 +22,7 @@
         * { box-sizing: border-box; }
         
         .brand-header { background: var(--urban-navy); padding: 20px; text-align: left; border-bottom: 5px solid var(--urban-gold); color: white; position: relative; }
+        
         .brand-name { font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; margin: 0; }
         .brand-tagline { color: var(--urban-gold); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
         .contact-info-line { font-size: 0.7rem; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; opacity: 0.9; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: 5px; }
@@ -85,6 +86,8 @@
         .sign-container { display: flex; justify-content: space-between; margin-top: 10px; gap: 20px; }
         .sign-box { flex: 1; border-top: 1px solid #333; text-align: center; padding-top: 8px; margin-top: 30px; font-weight: 700; font-size: 0.7rem; color: var(--urban-navy); text-transform: uppercase; }
 
+        .page-one-footer { text-align: center; font-size: 0.7rem; font-weight: 800; color: #444; margin-top: 25px; padding-top: 12px; border-top: 1px dashed #ccc; text-transform: uppercase; }
+
         .tc-list { font-size: 0.65rem; color: #444; padding-left: 15px; margin: 0; }
 
         .footer-nav { position: fixed; bottom: 0; width: 100%; background: var(--urban-navy); color: white; padding: 10px 0; border-top: 4px solid var(--urban-gold); z-index: 1000; }
@@ -104,21 +107,16 @@
 
         /* FORCED BACKGROUND GRAPHICS FOR PRINTING */
         @media print {
-            @page {
-                size: A4 portrait; /* Sets the default print size and orientation */
-                margin: 10mm; /* Optional: Sets a clean margin for the printed page */
-            }
-            *, body { 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                color-adjust: exact !important; 
-            }
+            @page { size: A4 portrait; margin: 10mm; }
+            *, body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
             .no-print, .footer-nav, #searchModal, .btn-del, .btn-move, .btn-action { display: none !important; }
             body { background: white; padding: 0; margin: 0; }
             .container { max-width: 100%; padding: 0; }
             .card { border: 1px solid #eee !important; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; box-shadow: none !important; }
-            input { border: none !important; background: transparent !important; padding: 0 !important; }
-            textarea { border: none !important; resize: none; }
+            input, textarea { border: none !important; background: transparent !important; padding: 0 !important; }
+            /* Hides placeholder text like "Full Name" when printing blank forms */
+            input::placeholder, textarea::placeholder { color: transparent !important; }
+            textarea { resize: none; }
             #summary-section { page-break-after: always; break-after: page; }
         }
     </style>
@@ -127,13 +125,12 @@
 
 <div id="capture-area">
     <div class="brand-header">
-        <div class="version-tag">v1.6</div>
+        <div class="version-tag">v1.12 Pro</div>
         <div class="brand-name">URBAN CASA</div>
         <div class="brand-tagline">Premium Modular Kitchens & Wardrobes</div>
         <div class="contact-info-line">
             <span><i class="fas fa-map-marker-alt"></i> Raichandani Mall - Kompally</span>
             <span><i class="fas fa-phone-alt"></i> +91 888 66 88 090</span>
-            <span><i class="fas fa-globe"></i> https://www.urban-casa.in</span>
             <span class="quotation-label">QUOTATION</span>
         </div>
     </div>
@@ -207,6 +204,11 @@
                 <div class="sign-box">Client Signature</div>
                 <div class="sign-box">Store Manager Signature</div>
             </div>
+            
+            <div class="page-one-footer">
+                <i class="fas fa-building"></i> Group of Raichandani Retails & Malls India Pvt Ltd &nbsp;|&nbsp; GST: 36AAMCR3765Q1ZF
+            </div>
+            
         </div>
 
         <div id="room-container"></div>
@@ -215,7 +217,7 @@
             <p style="text-align: center; font-size: 0.6rem; color: #888; text-transform: uppercase;">--- Authorized Quotation End ---</p>
             <div class="sign-container">
                 <div class="sign-box">Client Acceptance</div>
-                <div class="sign-box">Urban Casa Authorized Sign</div>
+                <div class="sign-box">For Group of Raichandani<br><span style="font-size:0.55rem; font-weight:normal; color:#888;">(Urban Casa Authorized Signatory)</span></div>
             </div>
         </div>
 
@@ -248,12 +250,10 @@
 </div>
 
 <script>
-    // Global Text Auto-Capitalize Script
     document.addEventListener('input', function(e) {
         if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
             let start = e.target.selectionStart;
             let val = e.target.value;
-            // Capitalize first letter of every word
             let capitalized = val.replace(/\b\w/g, char => char.toUpperCase());
             if (val !== capitalized) {
                 e.target.value = capitalized;
@@ -364,9 +364,8 @@
                     const h = parseFloat(row.querySelector('.h-val').value)||0;
                     const r = parseFloat(row.querySelector('.r-val').value)||0;
                     const mInput = parseFloat(row.querySelector('.mrp-val').value);
-                    const mrp = isNaN(mInput) ? r : mInput; // Fallback to Offer Price if MRP is blank
+                    const mrp = isNaN(mInput) ? r : mInput; 
                     
-                    // Conversion logic: mm * mm to SqFt
                     const sft = (w * h) / 92903.04; 
                     
                     mrpVal = sft * mrp;
@@ -376,7 +375,7 @@
                     const q = parseFloat(row.querySelector('.q-val').value)||0;
                     const p = parseFloat(row.querySelector('.amt-val').value)||0;
                     const mInput = parseFloat(row.querySelector('.mrp-val').value);
-                    const mrp = isNaN(mInput) ? p : mInput; // Fallback to Offer Price if MRP is blank
+                    const mrp = isNaN(mInput) ? p : mInput; 
                     
                     mrpVal = q * mrp;
                     offerVal = q * p; 
@@ -392,22 +391,17 @@
             subTotalMrp += cardMrpSum;
             subTotalOffer += cardOfferSum;
             
-            if(cardMetric > 0) {
-                // Clean SFT text for the summary table
-                const unitText = type === 'dims' ? ' Sft' : ' Qty';
-                const displayMetric = type === 'dims' ? cardMetric.toFixed(1) : Math.round(cardMetric);
-                
-                // Add strikethrough logic specifically for MRP
-                const displayMrp = `₹ ${Math.round(cardMrpSum).toLocaleString('en-IN')}`;
-                const strikeHtml = cardMrpSum > cardOfferSum ? `style="text-align:right; color:#888; text-decoration:line-through;"` : `style="text-align:right; color:#888;"`;
+            const unitText = type === 'dims' ? ' Sft' : ' Qty';
+            const displayMetric = type === 'dims' ? cardMetric.toFixed(1) : Math.round(cardMetric);
+            const displayMrp = `₹ ${Math.round(cardMrpSum).toLocaleString('en-IN')}`;
+            const strikeHtml = cardMrpSum > cardOfferSum ? `style="text-align:right; color:#888; text-decoration:line-through;"` : `style="text-align:right; color:#888;"`;
 
-                indexBody.insertAdjacentHTML('beforeend', `<tr>
-                    <td>${card.querySelector('.section-title').innerText}</td>
-                    <td style="text-align:center">${displayMetric}${unitText}</td>
-                    <td ${strikeHtml}>${displayMrp}</td>
-                    <td style="text-align:right">₹ ${Math.round(cardOfferSum).toLocaleString('en-IN')}</td>
-                </tr>`);
-            }
+            indexBody.insertAdjacentHTML('beforeend', `<tr>
+                <td>${card.querySelector('.section-title').innerText}</td>
+                <td style="text-align:center">${displayMetric}${unitText}</td>
+                <td ${strikeHtml}>${displayMrp}</td>
+                <td style="text-align:right">₹ ${Math.round(cardOfferSum).toLocaleString('en-IN')}</td>
+            </tr>`);
         });
         
         const gstRate = parseFloat(document.getElementById('gstRate').value)||0;
@@ -438,7 +432,6 @@
         const list = document.getElementById('searchResultsList'); list.innerHTML = '';
         Object.keys(data).forEach(key => {
             const phoneDisplay = data[key].phone ? ` - ${data[key].phone}` : '';
-            // ONLY displays Client Name and Phone per request
             list.insertAdjacentHTML('beforeend', `<div class="search-item"><span style="cursor:pointer;font-weight:600;flex-grow:1;" onclick="loadRecord('${key}')">${data[key].client} <span style="font-weight:normal; font-size:0.8em; color:#666;">${phoneDisplay}</span></span><button class="btn-del" onclick="deleteQuote('${key}')" title="Delete Saved Quote">✕</button></div>`);
         });
     }
@@ -448,7 +441,8 @@
         const filtered = {};
         Object.keys(allQuotes).forEach(k => { 
             const nameMatch = allQuotes[k].client && allQuotes[k].client.toLowerCase().includes(q);
-            const phoneMatch = allQuotes[k].phone && allQuotes[k].phone.toLowerCase().includes(q);
+            const phoneStr = allQuotes[k].phone ? String(allQuotes[k].phone) : ""; 
+            const phoneMatch = phoneStr.toLowerCase().includes(q);
             if(nameMatch || phoneMatch) {
                 filtered[k] = allQuotes[k];
             }
@@ -462,10 +456,11 @@
         document.getElementById('cAddress').value = d.address || ""; document.getElementById('gstRate').value = d.gst || 18;
         document.getElementById('customNotes').value = d.notes || "";
         document.getElementById('room-container').innerHTML = ''; roomCount = 0;
-        d.rooms.forEach(r => {
+        
+        d.rooms?.forEach(r => {
             renderRoomStructure(r.name, r.type);
             const curIdx = roomCount-1; document.getElementById(`sec-${curIdx}`).innerHTML = '';
-            r.items.forEach(it => addItem(curIdx, r.type, it));
+            r.items?.forEach(it => addItem(curIdx, r.type, it));
         });
         calculate(); closeSearch();
     }
@@ -505,8 +500,7 @@
             data.rooms.push(room);
         });
 
-        // Create a safe, unique key: Name_Phone (removes spaces and illegal Firebase characters)
-        const safeKey = `${name}_${phone}`.replace(/[\.\#\$\[\]\s]/g, '_');
+        const safeKey = `${name}_${phone}`.replace(/[^a-zA-Z0-9_-]/g, '_');
         
         try {
             await database.ref('quotations/' + safeKey).set(data); 
@@ -523,14 +517,15 @@
     async function shareToWhatsApp() {
         const name = document.getElementById('cName').value || "Client";
         const total = document.getElementById('idx-grand').innerText;
-        const msg = `*URBAN CASA QUOTATION*%0AClient: ${name}%0AGrand Total: ${total}%0A%0AView details at: https://www.urban-casa.in`;
+        const msg = `*URBAN CASA QUOTATION*%0AClient: ${name}%0AGrand Total: ${total}%0A%0AThank you for choosing Urban Casa!`;
         
         try {
             const area = document.getElementById('capture-area');
             const canvas = await html2canvas(area, { scale: 2 });
             const blob = await new Promise(res => canvas.toBlob(res));
             const file = new File([blob], "Quote.png", { type: 'image/png' });
-            if (navigator.share) {
+            
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({ files: [file], title: 'Urban Casa Quote' });
             } else {
                 window.open(`https://wa.me/?text=${msg}`);
@@ -559,10 +554,17 @@
         const cPhone = document.getElementById('cPhone').value || "N/A";
         const wb = XLSX.utils.book_new();
         
+        const cleanNum = (str) => {
+            if(!str) return 0;
+            const parsed = parseFloat(str.toString().replace(/[₹\s,]/g, ''));
+            return isNaN(parsed) ? str : parsed;
+        };
+        
         // --- SHEET 1: SUMMARY ---
         const summaryData = [
             ["URBAN CASA - Premium Modular Kitchens & Wardrobes"],
             ["Location:", "Raichandani Mall - Kompally"],
+            ["Company:", "Group of Raichandani Retails & Malls India Pvt Ltd | GST: 36AAMCR3765Q1ZF"],
             ["Client Name:", cName],
             ["Contact:", cPhone],
             ["Date:", document.getElementById('qDate').value],
@@ -574,15 +576,20 @@
         tableRows.forEach(row => {
             const cols = row.querySelectorAll('td');
             if(cols.length === 4) {
-                summaryData.push([cols[0].innerText, cols[1].innerText, cols[2].innerText, cols[3].innerText]);
+                summaryData.push([
+                    cols[0].innerText, 
+                    cols[1].innerText, 
+                    cleanNum(cols[2].innerText), 
+                    cleanNum(cols[3].innerText)
+                ]);
             }
         });
 
         summaryData.push([]);
-        summaryData.push(["", "", "Sub-Total:", document.getElementById('idx-sub').innerText]);
-        summaryData.push(["", "", document.getElementById('gstLabel').innerText, document.getElementById('idx-gst').innerText]);
-        summaryData.push(["", "", "GRAND TOTAL:", document.getElementById('idx-grand').innerText]);
-        summaryData.push(["", "", "TOTAL SAVINGS:", document.getElementById('idx-savings').innerText]);
+        summaryData.push(["", "", "Sub-Total:", cleanNum(document.getElementById('idx-sub').innerText)]);
+        summaryData.push(["", "", document.getElementById('gstLabel').innerText, cleanNum(document.getElementById('idx-gst').innerText)]);
+        summaryData.push(["", "", "GRAND TOTAL:", cleanNum(document.getElementById('idx-grand').innerText)]);
+        summaryData.push(["", "", "TOTAL SAVINGS:", cleanNum(document.getElementById('idx-savings').innerText)]);
 
         const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
         wsSummary['!cols'] = [{ wch: 35 }, { wch: 15 }, { wch: 15 }, { wch: 20 }];
@@ -609,20 +616,20 @@
 
             card.querySelectorAll('.measurement-row').forEach(row => {
                 const desc = row.querySelector('.desc-val').value || "-";
-                const rowTotal = row.querySelector('.row-total').innerText;
+                const rowTotal = cleanNum(row.querySelector('.row-total').innerText);
                 
                 if (type === 'dims') {
                     const w = row.querySelector('.w-val').value || 0;
                     const h = row.querySelector('.h-val').value || 0;
                     const r = row.querySelector('.r-val').value || 0;
                     const mInput = parseFloat(row.querySelector('.mrp-val').value);
-                    const m = isNaN(mInput) ? r : mInput; // Excel Fallback Logic
+                    const m = isNaN(mInput) ? r : mInput;
                     detailData.push([desc, w, h, m, r, rowTotal]);
                 } else {
                     const q = row.querySelector('.q-val').value || 0;
                     const p = row.querySelector('.amt-val').value || 0;
                     const mInput = parseFloat(row.querySelector('.mrp-val').value);
-                    const m = isNaN(mInput) ? p : mInput; // Excel Fallback Logic
+                    const m = isNaN(mInput) ? p : mInput;
                     detailData.push([desc, q, m, p, "", rowTotal]);
                 }
             });
@@ -633,8 +640,7 @@
         wsDetails['!cols'] = [{ wch: 40 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 20 }];
         XLSX.utils.book_append_sheet(wb, wsDetails, "Detailed Breakdown");
 
-        // --- INITIATE DOWNLOAD ---
-        XLSX.writeFile(wb, `UrbanCasa_Quote_${cName.replace(/\s+/g, '_')}.xlsx`);
+        XLSX.writeFile(wb, `UrbanCasa_Quote_${cName.replace(/[^a-zA-Z0-9_-]/g, '_')}.xlsx`);
     }
 </script>
 </body>
